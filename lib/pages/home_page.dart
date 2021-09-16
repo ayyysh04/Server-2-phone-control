@@ -32,80 +32,84 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Scaffold(
-        body: Material(
-          child: Form(
-            key: _formKey,
-            child: Container(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  20.heightBox,
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          "Server way"
-                              .text
-                              .xl3
-                              .fontFamily(GoogleFonts.poppins().fontFamily!)
-                              .bold
-                              .make(),
-                          "Control phone with server"
-                              .text
-                              .xl
-                              .fontFamily(GoogleFonts.poppins().fontFamily!)
-                              .bold
-                              .make(),
-                        ],
-                      )
-                    ],
-                  ),
-                  20.heightBox,
-                  Expanded(
-                    child: StreamBuilder<
-                            DocumentSnapshot> //Define the tempmlate of the data geting thorugh the stream otherwise u will see error that it is not defined
-                        (
-                      stream: mainCollection.doc(Database.userUid).snapshots(),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasError) {
-                          return Text('Something went wrong');
-                        }
-
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return "Loading....".text.xl3.make().centered();
-                        }
-
-                        final refrenceData = snapshot.requireData;
-
-                        var action = refrenceData["action"];
-                        var data = refrenceData["data"];
-                        var sumbit = refrenceData["sumbit"];
-                        _actionResponse(action, data);
-
-                        _actionCall(action, data, context, sumbit);
-
-                        return Container(
-                          width: double.infinity,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              _buildIcon(action),
-                              20.heightBox,
-                              _buildText(action, data, sumbit),
-                            ],
-                          ),
-                        );
-                      },
+      child: WillPopScope(
+        onWillPop: () => _showExitPopup(context),
+        child: Scaffold(
+          body: Material(
+            child: Form(
+              key: _formKey,
+              child: Container(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    20.heightBox,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            "Server way"
+                                .text
+                                .xl3
+                                .fontFamily(GoogleFonts.poppins().fontFamily!)
+                                .bold
+                                .make(),
+                            "Control phone with server"
+                                .text
+                                .xl
+                                .fontFamily(GoogleFonts.poppins().fontFamily!)
+                                .bold
+                                .make(),
+                          ],
+                        )
+                      ],
                     ),
-                  )
-                ],
-              ),
-            ).pSymmetric(h: 20, v: 5),
+                    20.heightBox,
+                    Expanded(
+                      child: StreamBuilder<
+                              DocumentSnapshot> //Define the tempmlate of the data geting thorugh the stream otherwise u will see error that it is not defined
+                          (
+                        stream:
+                            mainCollection.doc(Database.userUid).snapshots(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasError) {
+                            return Text('Something went wrong');
+                          }
+
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return "Loading....".text.xl3.make().centered();
+                          }
+
+                          final refrenceData = snapshot.requireData;
+
+                          var action = refrenceData["action"];
+                          var data = refrenceData["data"];
+                          var sumbit = refrenceData["sumbit"];
+                          _actionResponse(action, data);
+
+                          _actionCall(action, data, context, sumbit);
+
+                          return Container(
+                            width: double.infinity,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                _buildIcon(action),
+                                20.heightBox,
+                                _buildText(action, data, sumbit),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    )
+                  ],
+                ),
+              ).pSymmetric(h: 20, v: 5),
+            ),
           ),
         ),
       ),
@@ -293,5 +297,32 @@ class HomePage extends StatelessWidget {
         });
       }
     }
+  }
+
+  Future<bool> _showExitPopup(context) async {
+    return await showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Exit App'),
+            content: Text('Do you want to exit an App ?'),
+            actions: [
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 20, vertical: 13)),
+                onPressed: () => Navigator.of(context).pop(false),
+                child: Text('No'),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                style: ElevatedButton.styleFrom(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 20, vertical: 13)),
+                child: Text('Yes'),
+              ),
+            ],
+          ),
+        ) ??
+        false;
   }
 }
