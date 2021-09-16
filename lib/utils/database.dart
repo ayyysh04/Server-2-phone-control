@@ -5,28 +5,37 @@ final CollectionReference mainCollection = _firestore.collection('users');
 
 class Database {
   Database() {
-    add();
+    add(data: {"action": null, "data": null, "sumbit": false});
   }
   static String? userUid;
 
-  static Future<void> add() async {
+  static Future<void> add({var data}) async {
     DocumentReference documentReferencer = mainCollection.doc(userUid);
 
-    Map<String, dynamic> data = <String, dynamic>{
-      "action": Null,
-      "data": {
-        "body": 'Email body',
-        "subject": 'Email subject',
-        "recipients": ['example@example.com'],
-        "cc": ['cc@example.com'],
-        "bcc": ['bcc@example.com'],
-        "to": "ayushiit2003@gmail.com",
-      },
-    };
-
+    // Map<String, dynamic> data = <String, dynamic>{
+    //   "action": Null,
+    //   "data": {
+    //     "body": 'Email body',
+    //     "subject": 'Email subject',
+    //     "recipients": ['example@example.com'],
+    //     "cc": ['cc@example.com'],
+    //     "bcc": ['bcc@example.com'],
+    //     "to": "ayushiit2003@gmail.com",
+    //   },
+    // };
+    await _firestore.waitForPendingWrites();
     await documentReferencer
         .set(data)
         .whenComplete(() => print("Note item added to the database"))
+        .catchError((e) => print(e));
+  }
+
+  static Future<void> update({var data}) async {
+    DocumentReference documentReferencer = mainCollection.doc(userUid);
+    await _firestore.waitForPendingWrites();
+    await documentReferencer
+        .update(data)
+        .whenComplete(() => print("Note item updated in the database"))
         .catchError((e) => print(e));
   }
 

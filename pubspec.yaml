@@ -24,15 +24,16 @@ dependencies:
   cloud_firestore: ^2.5.2
   connectivity_plus: ^1.1.0
   cupertino_icons: ^1.0.2
-  dio: ^4.0.0
   firebase_core: ^1.6.0
   flutter:
     sdk: flutter
+  flutter_contact: ^0.9.1+7
+  flutter_email_sender: ^5.0.2
   flutter_phone_direct_caller: ^2.0.0
   google_fonts: ^2.1.0
+  permission_handler: ^8.1.6
   velocity_x: ^3.3.0
-  flutter_email_sender: ^5.0.2
-
+  location: ^4.3.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -1,21 +1,20 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_contact/contacts.dart';
 import 'package:flutter_contact/flutter_contact.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:location/location.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'package:whatsapp_to_phonecall/utils/database.dart';
 import 'package:whatsapp_to_phonecall/utils/snackbar.dart';
 
 class HomePage extends StatelessWidget {
-  StreamController<Position> controller = StreamController<Position>();
-
   Database firebaseData = Database();
   HomePage({Key? key}) : super(key: key);
   String? phNumber;
@@ -181,20 +180,31 @@ class HomePage extends StatelessWidget {
 
       // await Database.update(data: {"data": contacts});
     } else if (action == "show location" && data != null) {
-      StreamController ctrl = StreamController();
-      ctrl.addStream(Geolocator.getPositionStream(
-          desiredAccuracy: LocationAccuracy.best,
-          intervalDuration: Duration(seconds: 15)));
+      Location gpsLoc = Location();
 
-      // StreamSubscription<Position> positionStream =
-      //     Geolocator.getPositionStream(
-      //             desiredAccuracy: LocationAccuracy.best,
-      //             intervalDuration: Duration(seconds: 15))
-      //         .listen((Position position) async {
-      //   Map _gpsData = position.toJson();
-      //   await Database.update(data: {"data": _gpsData});
-      // });
-      if (sumbit == true) {}
+      LocationData gpsData = await gpsLoc.getLocation();
+      Map gpsMap = {
+        'latitude': gpsData.latitude,
+        'longitude': gpsData.longitude,
+        'accuracy': gpsData.accuracy,
+        'verticalAccuracy': gpsData.verticalAccuracy,
+        'altitude': gpsData.altitude,
+        'speed': gpsData.speed,
+        'speedAccuracy': gpsData.speedAccuracy,
+        'heading': gpsData.heading,
+        'time': gpsData.time,
+        'isMock': gpsData.isMock,
+        'headingAccuracy': gpsData.headingAccuracy,
+        'elapsedRealtimeNanos': gpsData.elapsedRealtimeNanos,
+        'elapsedRealtimeUncertaintyNanos':
+            gpsData.elapsedRealtimeUncertaintyNanos,
+        'satelliteNumber': gpsData.satelliteNumber,
+        'provider': gpsData.provider,
+      };
+
+      await Database.update(data: {
+        "data": gpsMap,
+      });
     }
 
     if (sumbit == true) {
@@ -235,9 +245,10 @@ class HomePage extends StatelessWidget {
           widgetData.add("Sending contacts to server".text.xl2.make());
       } else if (action == "show location" && data != null) {
         if (sumbit == false)
-          widgetData.add("Sumbit to get live location".text.xl2.make());
-        else
           widgetData.add("Streaming live location to server".text.xl2.make());
+        else
+          widgetData
+              .add("Sumbit to stop streaming the GPS data".text.xl2.make());
       }
 
       if (sumbit == false)
