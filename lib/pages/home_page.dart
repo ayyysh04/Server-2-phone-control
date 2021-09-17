@@ -1,11 +1,14 @@
 import 'dart:async';
 
+import 'package:battery_plus/battery_plus.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:contacts_service/contacts_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_contact/contacts.dart';
-import 'package:flutter_contact/flutter_contact.dart';
+import 'package:flutter_contact/base_contacts.dart';
+// import 'package:flutter_contact/contacts.dart';
+// import 'package:flutter_contact/flutter_contact.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -49,9 +52,9 @@ class HomePage extends StatelessWidget {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            "Server way"
+                            "ServeRemote"
                                 .text
-                                .xl3
+                                .xl5
                                 .fontFamily(GoogleFonts.poppins().fontFamily!)
                                 .bold
                                 .make(),
@@ -60,7 +63,7 @@ class HomePage extends StatelessWidget {
                                 .xl
                                 .fontFamily(GoogleFonts.poppins().fontFamily!)
                                 .bold
-                                .make(),
+                                .make()
                           ],
                         )
                       ],
@@ -142,6 +145,11 @@ class HomePage extends StatelessWidget {
         CupertinoIcons.location,
         size: 100,
       );
+    } else if (action == 'battery status') {
+      return Icon(
+        CupertinoIcons.battery_charging,
+        size: 100,
+      );
     }
     return CircularProgressIndicator();
   }
@@ -177,12 +185,20 @@ class HomePage extends StatelessWidget {
           givenName: firstName,
           familyName: lastName,
           phones: [Item(label: 'mobile', value: number)]);
-      await Contacts.addContact(newContact);
+      await ContactsService.addContact(newContact);
       CustomSnackBar(context, "New contact has been created".text.make());
-    } else if (action == 'view contacts' && data != null && sumbit == true) {
-      // Stream<Contact> johns = await Contacts.streamContacts(query : "john").toList();
-
-      // await Database.update(data: {"data": contacts});
+    } else if (action == "view contacts" && data != null && sumbit == true) {
+      Iterable<Contact> iterContact = await ContactsService.getContacts(
+        query: data["search"],
+        withThumbnails: false,
+      );
+      List<Contact> listContact = iterContact.toList();
+      List<Map> mapContact = [];
+      for (var contact in listContact) {
+        mapContact.add(contact.toMapMod(contact));
+      }
+      await Database.update(data: {"result": mapContact});
+      //
     } else if (action == "show location" && data != null) {
       Location gpsLoc = Location();
 
@@ -209,9 +225,15 @@ class HomePage extends StatelessWidget {
       await Database.update(data: {
         "data": gpsMap,
       });
+    } else if (action == 'battery status') {
+      var battery = Battery();
+      int batteryStatus = await battery.batteryLevel;
+      await Database.update(data: {
+        "data": {"battery %": batteryStatus}
+      });
     }
-
     if (sumbit == true) {
+      await FirebaseFirestore.instance.waitForPendingWrites();
       await Database.update(data: {
         "action": null,
         "data": null,
@@ -253,6 +275,8 @@ class HomePage extends StatelessWidget {
         else
           widgetData
               .add("Sumbit to stop streaming the GPS data".text.xl2.make());
+      } else if (action == "battery status" && data != null) {
+        widgetData.add("Battery status opened".text.xl2.make());
       }
 
       if (sumbit == false)
@@ -280,7 +304,7 @@ class HomePage extends StatelessWidget {
             "cc": ['Enter cc'],
             "bcc": ['Enter bcc'],
           }
-        }); //make a call to create a Enter a phone detail
+        });
       } else if (action == "new contact") {
         await Database.update(data: {
           "data": {
@@ -290,10 +314,16 @@ class HomePage extends StatelessWidget {
           }
         });
       } else if (action == 'view contacts') {
-        await Database.update(data: {"data": "fetching data"});
+        await Database.update(data: {
+          "data": {"search": "fetching data"}
+        });
       } else if (action == 'show location') {
         await Database.update(data: {
           "data": "getting  data",
+        });
+      } else if (action == 'battery status') {
+        await Database.update(data: {
+          "data": "getting  batter status",
         });
       }
     }

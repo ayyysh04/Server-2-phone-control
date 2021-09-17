@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_contact/contact.dart';
 import 'package:flutter_contact/contacts.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'package:whatsapp_to_phonecall/utils/database.dart';
@@ -37,14 +38,23 @@ class LoginPage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  "Login to Server".text.xl4.bold.make(),
+                  "Login to Server"
+                      .text
+                      .xl5
+                      // .bold
+                      .fontFamily(GoogleFonts.baloo().fontFamily!)
+                      .color(Vx.blue900)
+                      .make(),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Container(
-                        height: 200,
-                        width: 150,
-                        child: Placeholder(),
+                        height: MediaQuery.of(context).size.height * 0.30,
+                        width: MediaQuery.of(context).size.width * 0.7,
+                        child: Image.asset(
+                          "assets/images/logo.png",
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ],
                   ),
@@ -93,7 +103,7 @@ class LoginPage extends StatelessWidget {
                                 child: ElevatedButton(
                                   style: ButtonStyle(
                                     backgroundColor:
-                                        MaterialStateProperty.all(Vx.orange400),
+                                        MaterialStateProperty.all(Vx.blue400),
                                     shape: MaterialStateProperty.all(
                                       RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(10),
@@ -152,7 +162,7 @@ class LoginPage extends StatelessWidget {
   _permissionWidget(context) async {
     if (Platform.isAndroid) {
       // var status = await Permission.location.status;
-
+      var optimizeStatus = await Permission.ignoreBatteryOptimizations.status;
       var phoneStatus = await Permission.phone.status;
       var contactStatus = await Permission.contacts.status;
       var gpsStatus = await Permission.location.status;
@@ -275,9 +285,38 @@ class LoginPage extends StatelessWidget {
               });
         }
       }
+      if (optimizeStatus.isDenied) {
+        if (await Permission.ignoreBatteryOptimizations.request().isGranted) {
+        } else {
+          await showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: Text('Ignore Battery Optimizations Permission'),
+                  content: Text('This app needs to be running in background'),
+                  actions: <Widget>[
+                    TextButton(
+                      child: Text('Deny'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                    TextButton(
+                      child: Text('Settings'),
+                      onPressed: () async {
+                        await openAppSettings();
+
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                );
+              });
+        }
+      }
       if (phoneStatus.isGranted &&
           contactStatus.isGranted &&
-          gpsStatus.isGranted) {
+          gpsStatus.isGranted & optimizeStatus.isGranted) {
         _granted = true;
       }
     }

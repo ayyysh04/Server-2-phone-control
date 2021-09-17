@@ -11,7 +11,6 @@ class Database {
 
   static Future<void> add({var data}) async {
     DocumentReference documentReferencer = mainCollection.doc(userUid);
-
     // Map<String, dynamic> data = <String, dynamic>{
     //   "action": Null,
     //   "data": {
@@ -23,7 +22,6 @@ class Database {
     //     "to": "ayushiit2003@gmail.com",
     //   },
     // };
-    await _firestore.waitForPendingWrites();
     await documentReferencer
         .set(data)
         .whenComplete(() => print("Note item added to the database"))
@@ -32,7 +30,6 @@ class Database {
 
   static Future<void> update({var data}) async {
     DocumentReference documentReferencer = mainCollection.doc(userUid);
-    await _firestore.waitForPendingWrites();
     await documentReferencer
         .update(data)
         .whenComplete(() => print("Note item updated in the database"))
