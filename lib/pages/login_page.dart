@@ -2,14 +2,9 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/src/scheduler/ticker.dart';
-import 'package:flutter_contact/contact.dart';
-import 'package:flutter_contact/contacts.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:velocity_x/velocity_x.dart';
-import 'package:video_player/video_player.dart';
-import 'package:whatsapp_to_phonecall/pages/signup_page.dart';
 import 'package:whatsapp_to_phonecall/utils/database.dart';
 import 'package:whatsapp_to_phonecall/utils/routes.dart';
 import 'package:whatsapp_to_phonecall/utils/snackbar.dart';
@@ -28,19 +23,10 @@ class _LoginPageState extends State<LoginPage>
   late bool _granted;
   late final TextEditingController _uidController;
   late final _loginInFormKey;
-  late VideoPlayerController _controller;
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.asset("assets/video/bg-video3.mp4");
-    _controller.initialize().then((_) {
-      _controller.setLooping(true);
-      // Timer(Duration(milliseconds: 100), () {
-      setState(() {
-        _controller.play();
-      });
-      // });
-    });
+
     _uidNode = FocusNode();
 
     _granted = false;
@@ -76,8 +62,6 @@ class _LoginPageState extends State<LoginPage>
 
   @override
   void dispose() {
-    _controller.dispose();
-
     _uidController.dispose();
     _loginButtonController.dispose();
     _uidNode.dispose();
@@ -103,7 +87,6 @@ class _LoginPageState extends State<LoginPage>
                 alignment: AlignmentDirectional.bottomCenter,
                 fit: StackFit.expand,
                 children: [
-                  _getVideoBackground(),
                   Positioned(
                     top: 40,
                     left: 0,
@@ -136,13 +119,13 @@ class _LoginPageState extends State<LoginPage>
                       child: TextFormField(
                         focusNode: _uidNode,
                         decoration: InputDecoration(
-                          labelStyle: TextStyle(color: Colors.white),
-                          hintStyle: TextStyle(color: Colors.white),
-                          prefixStyle: TextStyle(color: Colors.white),
+                          // labelStyle: TextStyle(color: Colors.white),
+                          // hintStyle: TextStyle(color: Colors.white),
+                          // prefixStyle: TextStyle(color: Colors.white),
                           prefixIcon: Icon(
                             Icons.account_circle,
                             size: 30,
-                            color: Colors.white,
+                            // color: Colors.white,
                           ).p(0),
                           labelText: "User id",
                           hintText: "Enter the User id",
@@ -180,7 +163,7 @@ class _LoginPageState extends State<LoginPage>
                         child: Text(
                           'Don\'t have an account? Sign up',
                           style: TextStyle(
-                            color: Colors.white,
+                            // color: Colors.white,
                             letterSpacing: 0.5,
                           ),
                         ),
@@ -436,13 +419,5 @@ class _LoginPageState extends State<LoginPage>
       await _loginButtonController.forward();
       await _loginButtonController.reverse();
     } on TickerCanceled {}
-  }
-
-  _getVideoBackground() {
-    return AnimatedOpacity(
-      opacity: .95,
-      duration: Duration(milliseconds: 1000),
-      child: VideoPlayer(_controller),
-    );
   }
 }
