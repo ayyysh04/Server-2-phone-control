@@ -1,3 +1,4 @@
+import 'package:easy_splash_screen/easy_splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -12,6 +13,22 @@ void main() {
   Firebase.initializeApp();
 }
 
+class SplashScreen extends StatelessWidget {
+  const SplashScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return EasySplashScreen(
+      logo: Image.asset("assets/images/logo.png"),
+      logoSize: 120,
+      showLoader: true,
+      loadingText: Text("MADE IN INDIA"),
+      navigator: LoginPage(),
+      durationInSeconds: 3,
+    );
+  }
+}
+
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -24,11 +41,26 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       routes: {
-        "/": (context) => LoginPage(),
+        "/": (context) => SplashScreen(),
         MyRoutes.homeRoute: (context) => HomePage(),
         MyRoutes.loginRoute: (context) => LoginPage(),
-        MyRoutes.SignupRoute: (context) => SignupPage()
+        MyRoutes.signupRoute: (context) => SignupPage()
       },
+      // onGenerateRoute: (RouteSettings settings) {
+      //   switch (settings.name) {
+      //     case '/login':
+      //       return new MyCustomRoute(
+      //         builder: (_) => LoginPage(),
+      //         settings: settings,
+      //       );
+
+      //     case '/home':
+      //       return new MyCustomRoute(
+      //         builder: (_) => HomePage(),
+      //         settings: settings,
+      //       );
+      //   }
+      // },
       debugShowCheckedModeBanner: false,
     );
   }

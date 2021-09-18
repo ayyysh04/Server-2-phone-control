@@ -21,33 +21,27 @@ environment:
   sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
+  battery_plus: ^1.1.1
   cloud_firestore: ^2.5.2
   connectivity_plus: ^1.1.0
+  contacts_service: ^0.6.1
   cupertino_icons: ^1.0.2
+  easy_splash_screen: ^1.0.3
+  firebase_auth: ^3.1.1
   firebase_core: ^1.6.0
   flutter:
     sdk: flutter
   flutter_contact: ^0.9.1+7
   flutter_email_sender: ^5.0.2
+  flutter_launcher_icons: ^0.9.2
   flutter_phone_direct_caller: ^2.0.0
   google_fonts: ^2.1.0
+  location: ^4.3.0
   permission_handler: ^8.1.6
   velocity_x: ^3.3.0
-  location: ^4.3.0
-  battery_plus: ^1.1.1
-  flutter_native_splash: ^1.2.3
-  flutter_launcher_icons: "^0.9.2"
-  contacts_service: ^0.6.1
-  simple_animations: ^3.2.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
-flutter_native_splash:
-  color: "#ffffff"
-  image: assets/images/logo.png
-  android: true
-  ios: true
 
 flutter_icons:
   android: "launcher_icon"
@@ -65,6 +59,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/
+    - assets/video/
   #   - images/a_dot_ham.jpeg
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
