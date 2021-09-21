@@ -21,6 +21,7 @@ environment:
   sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
+  animated_splash_screen: ^1.1.0
   battery_plus: ^1.1.1
   cloud_firestore: ^2.5.2
   connectivity_plus: ^1.1.0
@@ -39,6 +40,7 @@ dependencies:
   location: ^4.3.0
   permission_handler: ^8.1.6
   velocity_x: ^3.3.0
+  page_transition: ^2.0.1-nullsafety.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

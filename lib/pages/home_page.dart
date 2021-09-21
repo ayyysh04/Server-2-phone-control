@@ -3,10 +3,8 @@ import 'dart:async';
 import 'package:battery_plus/battery_plus.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:contacts_service/contacts_service.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_contact/base_contacts.dart';
 // import 'package:flutter_contact/contacts.dart';
 // import 'package:flutter_contact/flutter_contact.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
@@ -15,7 +13,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:location/location.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'package:whatsapp_to_phonecall/utils/database.dart';
-import 'package:whatsapp_to_phonecall/utils/snackbar.dart';
+import 'package:whatsapp_to_phonecall/widget/snackbar.dart';
 
 class HomePage extends StatelessWidget {
   Database firebaseData = Database();
