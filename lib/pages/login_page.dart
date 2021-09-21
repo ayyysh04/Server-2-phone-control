@@ -393,7 +393,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                                   title: Text(
                                                       'Email verification required'),
                                                   content: Container(
-                                                    height: 150,
+                                                    height: 170,
                                                     width: 200,
                                                     child: SizedBox.expand(
                                                       child: Column(
@@ -486,7 +486,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                                                 _verified =
                                                                     true;
 
-                                                                timer.cancel();
+                                                                _timer!
+                                                                    .cancel();
                                                               });
                                                             }
                                                           });
