@@ -5,7 +5,13 @@ final CollectionReference mainCollection = _firestore.collection('users');
 
 class Database {
   Database() {
-    add(data: {"action": null, "data": null, "sumbit": false});
+    update(data: {
+      // "DisplayName": null,
+      "DisplayPhotoLink": null,
+      "action": null,
+      "data": null,
+      "sumbit": false
+    });
   }
   static String? userUid;
 

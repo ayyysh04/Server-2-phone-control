@@ -1,13 +1,19 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_contact/contact.dart';
 import 'package:velocity_x/velocity_x.dart';
+import 'package:whatsapp_to_phonecall/utils/database.dart';
 
 import 'package:whatsapp_to_phonecall/widget/snackbar.dart';
 
 class FirebaseAuthData {
   static late FirebaseAuth auth;
+  static Future<void> logOut() async {
+    await auth.signOut();
+    UserData.user = null;
+  }
 
   static Future<bool> signInWithEmailAndPassword(
       String email, String pass, BuildContext context) async {
@@ -64,8 +70,7 @@ class FirebaseAuthData {
         email: email,
       );
 
-      CustomSnackBar(
-          context, Text('Reset link sent to ${UserData.user!.email}'));
+      CustomSnackBar(context, Text('Reset link sent to $email'));
     } on FirebaseAuthException catch (e) {
       print(e.code);
       switch (e.code) {
@@ -132,6 +137,8 @@ class FirebaseAuthData {
 
 class UserData {
   static User? user;
+  static String displayName = "Default User";
+  static String? displayPhotoLink;
 }
 
 class VerifyEmailWidget extends StatelessWidget {

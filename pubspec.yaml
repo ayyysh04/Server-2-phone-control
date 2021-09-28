@@ -30,17 +30,21 @@ dependencies:
   easy_splash_screen: ^1.0.3
   firebase_auth: ^3.1.1
   firebase_core: ^1.6.0
+  firebase_storage: ^10.0.3
   flutter:
     sdk: flutter
   flutter_contact: ^0.9.1+7
   flutter_email_sender: ^5.0.2
   flutter_launcher_icons: ^0.9.2
   flutter_phone_direct_caller: ^2.0.0
+  font_awesome_flutter: ^9.1.0
   google_fonts: ^2.1.0
+  image_picker: ^0.8.4+2
+  line_awesome_flutter: ^2.0.0
   location: ^4.3.0
+  page_transition: ^2.0.1-nullsafety.0
   permission_handler: ^8.1.6
   velocity_x: ^3.3.0
-  page_transition: ^2.0.1-nullsafety.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
