@@ -44,38 +44,40 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    _userNameController = TextEditingController(text: UserData.displayName);
+    _userNameController = TextEditingController();
     _getUserProfileData();
     _picker = ImagePicker();
     _pageController = PageController(initialPage: 0, keepPage: true);
 
     _userNameNode = FocusNode();
+
     super.initState();
   }
 
   _getUserProfileData() async {
     DocumentSnapshot userDataSnapshot =
         await mainCollection.doc(UserData.user!.uid).get();
-    if (userDataSnapshot["DisplayName"] != null) {
-      print(userDataSnapshot["DisplayName"]);
 
-      UserData.displayName = userDataSnapshot["DisplayName"];
-    }
+    UserData.displayName = userDataSnapshot["DisplayName"];
+
     UserData.displayPhotoLink = userDataSnapshot["DisplayPhotoLink"];
+    Directory appDocDir = await getApplicationDocumentsDirectory();
+    //downloading file if file not present
+    if (await File('${appDocDir.path}/profilePhoto.png').exists() == false) {
+      if (UserData.displayPhotoLink != null) {
+        File downloadToFile = File('${appDocDir.path}/profilePhoto.png');
 
-    //downloading file
-    if (UserData.displayPhotoLink != null) {
-      Directory appDocDir = await getApplicationDocumentsDirectory();
-      File downloadToFile = File('${appDocDir.path}/profilePhoto.png');
-
-      try {
-        await FirebaseStorage.instance
-            .ref(UserData.displayPhotoLink)
-            .writeToFile(downloadToFile);
-      } on FirebaseException catch (e) {
-        print(e);
+        try {
+          await FirebaseStorage.instance
+              .ref(UserData.displayPhotoLink)
+              .writeToFile(downloadToFile);
+          image = File('${appDocDir.path}/profilePhoto.png');
+        } on FirebaseException catch (e) {
+          print(e);
+        }
       }
-    }
+    } else
+      image = File('${appDocDir.path}/profilePhoto.png');
   }
 
   @override
@@ -152,7 +154,7 @@ class _HomePageState extends State<HomePage> {
                                   DocumentSnapshot> //Define the tempmlate of the data geting thorugh the stream otherwise u will see error that it is not defined
                               (
                             stream: mainCollection
-                                .doc(Database.userUid)
+                                .doc(UserData.user!.uid)
                                 .snapshots(),
                             builder: (context, snapshot) {
                               if (snapshot.hasError) {
@@ -445,7 +447,7 @@ class _HomePageState extends State<HomePage> {
           context: context,
           builder: (context) => AlertDialog(
             title: Text('Exit App'),
-            content: Text('Do you want to exit an App ?'),
+            content: Text('Do you want to exit the App ?'),
             actions: [
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -468,6 +470,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _profilePage(BuildContext context) {
+    String? _displayName;
     var profileInfo = Expanded(
       child: Column(
         children: [
@@ -536,31 +539,17 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           ),
-          SizedBox(height: 5),
-          TextField(
-            focusNode: _userNameNode,
-            textAlign: TextAlign.center,
+          SizedBox(height: 20),
+          Text(
+            (UserData.displayName == null)
+                ? "Default User"
+                : UserData.displayName!,
             style: TextStyle(
               fontSize: 25,
               fontWeight: FontWeight.w600,
             ),
-            decoration: InputDecoration(
-              contentPadding: EdgeInsets.all(0),
-              border: InputBorder.none,
-            ),
-            controller: _userNameController,
-            onSubmitted: (value) {
-              Database.update(data: {"DisplayName": value});
-            },
           ),
-          // Text(
-          //   UserData.displayName,
-          //   style: TextStyle(
-          //     fontSize: 25,
-          //     fontWeight: FontWeight.w600,
-          //   ),
-          // ),
-          // SizedBox(height: 5),
+          SizedBox(height: 5),
           Text(
             UserData.user!.email!,
             style: TextStyle(
@@ -573,34 +562,91 @@ class _HomePageState extends State<HomePage> {
       ),
     );
 
-    var header = Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        SizedBox(width: 30),
-        Icon(
-          LineAwesomeIcons.arrow_left,
-          size: 30,
-        ),
-        profileInfo,
-        SizedBox(width: 50),
-      ],
-    );
+    Widget profileHeader() {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          SizedBox(width: 30),
+          Icon(
+            LineAwesomeIcons.arrow_left,
+            size: 30,
+          ),
+          profileInfo,
+          SizedBox(width: 50),
+        ],
+      );
+    }
 
     return Scaffold(
       backgroundColor: Vx.white,
       body: Column(
         children: <Widget>[
           SizedBox(height: 40),
-          header,
+          profileHeader(),
           Expanded(
             child: ListView(
               children: <Widget>[
-                _profileListItems(
-                    context: context,
-                    icon: LineAwesomeIcons.user_shield,
-                    title: 'Privacy',
-                    disible: true),
+                GestureDetector(
+                  onTap: () async {
+                    await showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                              title: Text('Change Username'),
+                              content: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text('Do you want to change the username ?'),
+                                  10.heightBox,
+                                  TextFormField(
+                                    textAlign: TextAlign.center,
+                                    decoration: InputDecoration(
+                                        hintText: "Enter Username Here",
+                                        border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(10))),
+                                        contentPadding: EdgeInsets.all(0)),
+                                    keyboardType: TextInputType.name,
+                                    onChanged: (value) {
+                                      _displayName = value;
+                                    },
+                                  )
+                                ],
+                              ),
+                              actions: [
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 20, vertical: 13)),
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text('No'),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    if (_displayName != null) {
+                                      Database.update(
+                                          data: {"DisplayName": _displayName});
+                                      UserData.displayName = _displayName;
+                                      setState(() {});
+                                    }
+                                    Navigator.of(context).pop();
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 20, vertical: 13)),
+                                  child: Text('Yes'),
+                                ),
+                              ],
+                            ));
+                  },
+                  child: _profileListItems(
+                      context: context,
+                      icon: LineAwesomeIcons.user_shield,
+                      title: 'Change Username',
+                      disible: false),
+                ),
                 _profileListItems(
                     context: context,
                     icon: LineAwesomeIcons.question_circle,
@@ -660,7 +706,7 @@ class _HomePageState extends State<HomePage> {
           Text(
             title,
             style: TextStyle(
-              fontSize: 25,
+              fontSize: 20,
               fontWeight: FontWeight.w500,
             ),
           ),

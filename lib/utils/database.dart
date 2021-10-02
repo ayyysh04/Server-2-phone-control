@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:whatsapp_to_phonecall/utils/firebase_auth.dart';
 
 final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 final CollectionReference mainCollection = _firestore.collection('users');
@@ -6,13 +7,12 @@ final CollectionReference mainCollection = _firestore.collection('users');
 class Database {
   Database() {
     update(data: {
-      // "DisplayName": null,
-      "DisplayPhotoLink": null,
       "action": null,
       "data": null,
-      "sumbit": false
+      "sumbit": false,
     });
   }
+
   static String? userUid;
 
   static Future<void> add({var data}) async {

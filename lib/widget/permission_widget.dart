@@ -7,6 +7,7 @@ Future<bool> permissionWidget(context) async {
   if (Platform.isAndroid) {
     // var status = await Permission.location.status;
     var optimizeStatus = await Permission.ignoreBatteryOptimizations.status;
+
     var phoneStatus = await Permission.phone.status;
     var contactStatus = await Permission.contacts.status;
     var gpsStatus = await Permission.location.status;
@@ -157,6 +158,11 @@ Future<bool> permissionWidget(context) async {
             });
       }
     }
+    optimizeStatus = await Permission.ignoreBatteryOptimizations.status;
+    phoneStatus = await Permission.phone.status;
+    contactStatus = await Permission.contacts.status;
+    gpsStatus = await Permission.location.status;
+    backgoundGpsStatus = await Permission.locationAlways.status;
     if (phoneStatus.isGranted &&
         contactStatus.isGranted &&
         gpsStatus.isGranted & optimizeStatus.isGranted) {

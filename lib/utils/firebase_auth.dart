@@ -98,12 +98,19 @@ class FirebaseAuthData {
       required String pass,
       required BuildContext context}) async {
     try {
-      await auth.createUserWithEmailAndPassword(
+      UserCredential userCreds = await auth.createUserWithEmailAndPassword(
         email: emailId,
         password: pass,
       );
 
-      CustomSnackBar(context, Text('${UserData.user!.email} account created'));
+      CustomSnackBar(context, Text('$emailId account created'));
+      await mainCollection.doc(userCreds.user!.uid).set({
+        "action": null,
+        "data": null,
+        "sumbit": false,
+        "DisplayName": "Default User",
+        "DisplayPhotoLink": null,
+      });
       return true;
     } on FirebaseAuthException catch (e) {
       UserData.user = null;
@@ -137,15 +144,6 @@ class FirebaseAuthData {
 
 class UserData {
   static User? user;
-  static String displayName = "Default User";
+  static String? displayName;
   static String? displayPhotoLink;
-}
-
-class VerifyEmailWidget extends StatelessWidget {
-  const VerifyEmailWidget({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container();
-  }
 }

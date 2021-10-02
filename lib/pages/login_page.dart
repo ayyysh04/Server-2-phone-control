@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'package:whatsapp_to_phonecall/utils/database.dart';
 import 'package:whatsapp_to_phonecall/utils/dialog_button.dart';
@@ -37,9 +38,9 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   void initState() {
     super.initState();
 
-    // _auth
-    //     .userChanges()
-    //     .listen((event) => setState(() => UserData.user = event));
+    _auth
+        .userChanges()
+        .listen((event) => setState(() => UserData.user = event));
     _emailNode = FocusNode();
     _emailController = TextEditingController();
 
@@ -135,6 +136,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                     ),
                     Positioned(
                       top: MediaQuery.of(context).size.height * 0.2,
+                      // top: MediaQuery.of(context).size.height * 0.15,
                       child: Container(
                         height: MediaQuery.of(context).size.height * 0.30,
                         width: MediaQuery.of(context).size.width * 0.7,
@@ -352,312 +354,283 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                 )
                               : EdgeInsets.only(top: 0.0, bottom: 0.0),
                           child: InkWell(
-                              onTap: _isSigningIn
-                                  ? null
-                                  : () async {
-                                      setState(() {
-                                        _isSigningIn = true;
-                                      });
-                                      _emailNode.unfocus();
-                                      _passNode.unfocus();
-                                      _granted =
-                                          await permissionWidget(context);
-                                      await _loginButtonController.forward();
-                                      if (_loginInFormKey.currentState!
-                                              .validate() &&
-                                          _granted &&
-                                          await FirebaseAuthData
-                                              .signInWithEmailAndPassword(
-                                                  _email!, _pass!, context)) {
-                                        Database.userUid = UserData.user!.uid;
-                                        //or
-                                        //  Database.userUid =_uidController.text;
-                                        // await _playAnimation();
-                                        final User? user = _auth.currentUser;
+                            onTap: _isSigningIn
+                                ? null
+                                : () async {
+                                    setState(() {
+                                      _isSigningIn = true;
+                                    });
+                                    _emailNode.unfocus();
+                                    _passNode.unfocus();
+                                    _granted = await permissionWidget(context);
+                                    await _loginButtonController.forward();
+                                    if (_loginInFormKey.currentState!
+                                            .validate() &&
+                                        _granted &&
+                                        await FirebaseAuthData
+                                            .signInWithEmailAndPassword(
+                                                _email!, _pass!, context)) {
+                                      Database.userUid = UserData.user!.uid;
 
-                                        if (user != null) {
-                                          await _loginButtonZoomController
-                                              .forward();
-                                          await _loginButtonZoomController
-                                              .reverse();
-                                        }
+                                      //or
+                                      //  Database.userUid =_uidController.text;
+                                      // await _playAnimation();
+                                      final User? user = _auth.currentUser;
+
+                                      if (user != null) {
+                                        await _loginButtonZoomController
+                                            .forward();
+                                        await _loginButtonZoomController
+                                            .reverse();
                                       }
-                                      if (UserData.user != null &&
-                                          !UserData.user!.emailVerified) {
-                                        bool _isverifing = false;
-                                        bool _verified = false;
-                                        await showGeneralDialog(
-                                            context: context,
-                                            pageBuilder: (BuildContext context,
-                                                Animation animation,
-                                                Animation secondaryAnimation) {
-                                              return StatefulBuilder(builder:
-                                                  (context, setStateBuild) {
-                                                return SizedBox.expand(
-                                                  child: AlertDialog(
-                                                    backgroundColor:
-                                                        Colors.white,
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.all(
-                                                              Radius.circular(
-                                                                  20.0)),
-                                                    ),
-                                                    insetPadding:
-                                                        EdgeInsets.all(8),
-                                                    elevation: 10,
-                                                    titlePadding:
-                                                        const EdgeInsets.all(
-                                                            0.0),
-                                                    title: Container(
-                                                      child: Center(
+                                    }
+                                    if (UserData.user != null &&
+                                        !UserData.user!.emailVerified) {
+                                      bool _isverifing = false;
+                                      bool _verified = false;
+                                      await showGeneralDialog(
+                                          context: context,
+                                          pageBuilder: (BuildContext context,
+                                              Animation animation,
+                                              Animation secondaryAnimation) {
+                                            return StatefulBuilder(builder:
+                                                (context, setStateBuild) {
+                                              return AlertDialog(
+                                                backgroundColor: Colors.white,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                          Radius.circular(
+                                                              20.0)),
+                                                ),
+                                                insetPadding: EdgeInsets.all(8),
+                                                elevation: 10,
+                                                titlePadding:
+                                                    const EdgeInsets.all(0.0),
+                                                title: Column(
+                                                  children: [
+                                                    _getCloseButton(context),
+                                                    Container(
+                                                      height: 230,
+                                                      width: 300,
+                                                      child: SizedBox.expand(
                                                         child: Column(
+                                                          mainAxisSize:
+                                                              MainAxisSize.min,
                                                           mainAxisAlignment:
                                                               MainAxisAlignment
                                                                   .center,
                                                           children: [
-                                                            // _closeButton(context),
-                                                            Padding(
-                                                              padding:
-                                                                  EdgeInsets
-                                                                      .fromLTRB(
-                                                                          20,
-                                                                          10,
-                                                                          20,
-                                                                          0),
-                                                              child: Column(
-                                                                children: [
-                                                                  _isverifing
-                                                                      ? Container(
-                                                                          child:
-                                                                              CircularProgressIndicator(),
-                                                                          width:
-                                                                              50,
-                                                                          height:
-                                                                              50,
-                                                                        )
-                                                                      : _verified
-                                                                          ? Icon(
-                                                                              Icons.done,
-                                                                              size: 100,
-                                                                              color: Colors.green,
-                                                                            )
-                                                                          : Icon(
-                                                                              Icons.close,
-                                                                              size: 100,
-                                                                              color: Vx.red900,
-                                                                            ),
-                                                                  SizedBox(
-                                                                    height: 15,
-                                                                  ),
-                                                                  _isverifing
-                                                                      ? "Verifying"
-                                                                          .text
-                                                                          .make()
-                                                                          .py(
-                                                                              10)
-                                                                      : _verified
-                                                                          ? "You are verifed!\nLogin to continue"
-                                                                              .text
-                                                                              .make()
-                                                                              .py(
-                                                                                  10)
-                                                                          : "Click verify to continue"
-                                                                              .text
-                                                                              .make()
-                                                                              .py(10),
-                                                                  Text(
-                                                                    "Alert with Close Button",
-                                                                    style: TextStyle(
+                                                            _isverifing
+                                                                ? Container(
+                                                                    child:
+                                                                        CircularProgressIndicator(),
+                                                                    width: 50,
+                                                                    height: 50,
+                                                                  )
+                                                                : _verified
+                                                                    ? Icon(
+                                                                        Icons
+                                                                            .done,
+                                                                        size:
+                                                                            100,
                                                                         color: Colors
-                                                                            .black,
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .w500,
-                                                                        fontStyle:
-                                                                            FontStyle.normal),
-                                                                    textAlign:
-                                                                        TextAlign
-                                                                            .center,
-                                                                  ),
-                                                                  SizedBox(
-                                                                    height: 10,
-                                                                  ),
-                                                                  Text(
-                                                                    "Your Subscription Plan Expiered",
-                                                                    style: TextStyle(
-                                                                        color: Colors
-                                                                            .black,
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .w400,
-                                                                        fontStyle:
-                                                                            FontStyle.normal),
-                                                                    textAlign:
-                                                                        TextAlign
-                                                                            .center,
-                                                                  ),
-                                                                  SizedBox(
-                                                                    height: 20,
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            )
+                                                                            .green,
+                                                                      )
+                                                                    : Icon(
+                                                                        Icons
+                                                                            .close,
+                                                                        size:
+                                                                            100,
+                                                                        color: Vx
+                                                                            .red900,
+                                                                      ),
+                                                            // SizedBox(
+                                                            //   height: 15,
+                                                            // ),
+                                                            _isverifing
+                                                                ? "Verifying"
+                                                                    .text
+                                                                    .make()
+                                                                    .py(10)
+                                                                : _verified
+                                                                    ? "You are verifed!\nLogin to continue"
+                                                                        .text
+                                                                        .make()
+                                                                        .py(10)
+                                                                    : "You are not verified!\n\nClick verify to continue"
+                                                                        .text
+                                                                        .center
+                                                                        .make()
+                                                                        .py(10),
+                                                            // SizedBox(
+                                                            //   height: 15,
+                                                            // ),
                                                           ],
                                                         ),
                                                       ),
                                                     ),
-                                                    content: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceEvenly,
-                                                      children: [
-                                                        Visibility(
-                                                            visible:
-                                                                !_isverifing,
-                                                            child: DialogButton(
-                                                              width: 100,
-                                                              child: Text(
-                                                                "Verify",
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .white,
-                                                                    fontSize:
-                                                                        18),
-                                                              ),
-                                                              onPressed:
-                                                                  () async {
-                                                                setStateBuild(
-                                                                    () {
-                                                                  _isverifing =
-                                                                      true;
-                                                                });
-                                                                try {
-                                                                  await UserData
-                                                                      .user!
-                                                                      .sendEmailVerification();
-                                                                } on FirebaseAuthException catch (e) {
-                                                                  print(e
-                                                                      .code); //only for debugging
-                                                                }
+                                                  ],
+                                                ),
+                                                content: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    Visibility(
+                                                        visible: !_isverifing,
+                                                        child: DialogButton(
+                                                          width: 100,
+                                                          child: Text(
+                                                            "Verify",
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .white,
+                                                                fontSize: 18),
+                                                          ),
+                                                          onPressed: () async {
+                                                            setStateBuild(() {
+                                                              _isverifing =
+                                                                  true;
+                                                            });
+                                                            try {
+                                                              await UserData
+                                                                  .user!
+                                                                  .sendEmailVerification();
+                                                            } on FirebaseAuthException catch (e) {
+                                                              print(e
+                                                                  .code); //only for debugging
+                                                            }
 
-                                                                _timer = Timer.periodic(
+                                                            _timer =
+                                                                Timer.periodic(
                                                                     Duration(
                                                                         seconds:
                                                                             5),
                                                                     (timer) {
-                                                                  UserData.user!
-                                                                      .reload();
-                                                                  if (UserData
-                                                                          .user!
-                                                                          .emailVerified ==
-                                                                      true) {
-                                                                    setStateBuild(
-                                                                        () {
-                                                                      _isverifing =
-                                                                          false;
-                                                                      _verified =
-                                                                          true;
+                                                              UserData.user!
+                                                                  .reload();
+                                                              print("kii");
+                                                              print(UserData
+                                                                  .user!
+                                                                  .emailVerified);
+                                                              if (UserData.user!
+                                                                      .emailVerified ==
+                                                                  true) {
+                                                                setStateBuild(
+                                                                    () {
+                                                                  _isverifing =
+                                                                      false;
+                                                                  _verified =
+                                                                      true;
 
-                                                                      _timer!
-                                                                          .cancel();
-                                                                    });
-                                                                  }
+                                                                  _timer!
+                                                                      .cancel();
                                                                 });
-                                                              },
-                                                              color: Color
-                                                                  .fromRGBO(
-                                                                      0,
-                                                                      179,
-                                                                      134,
-                                                                      1.0),
-                                                            )),
-                                                        DialogButton(
-                                                            width: 100,
-                                                            child: Text(
-                                                              "Cancel",
-                                                              style: TextStyle(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  fontSize: 18),
-                                                            ),
-                                                            onPressed: () {
-                                                              Navigator.of(
-                                                                      context)
-                                                                  .pop();
-                                                            },
-                                                            color:
-                                                                Color.fromRGBO(
-                                                                    251,
-                                                                    80,
-                                                                    80,
-                                                                    1))
-                                                      ],
-                                                    ),
-                                                  ),
-                                                );
-                                              });
+                                                              }
+                                                            });
+                                                          },
+                                                          color: Color.fromRGBO(
+                                                              0, 179, 134, 1.0),
+                                                        )),
+                                                    DialogButton(
+                                                        width: 100,
+                                                        child: Text(
+                                                          "Cancel",
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.white,
+                                                              fontSize: 18),
+                                                        ),
+                                                        onPressed: () {
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                        },
+                                                        color: Color.fromRGBO(
+                                                            251, 80, 80, 1))
+                                                  ],
+                                                ),
+                                              );
                                             });
-                                      }
-                                      await _loginButtonController.reverse();
-                                      if (!_granted) {
-                                        CustomSnackBar(context,
-                                            "App needs permission".text.make(),
-                                            bg: Vx.red400);
-                                      }
+                                          });
+                                    }
+                                    await _loginButtonController.reverse();
+                                    if (!_granted) {
+                                      CustomSnackBar(context,
+                                          "App needs permission".text.make(),
+                                          bg: Vx.red400);
+                                    }
 
-                                      _timer?.cancel();
-                                      _emailController.clear();
-                                      _passController.clear();
-                                      _email = null;
-                                      _pass = null;
-                                      setState(() {
-                                        _isSigningIn = false;
-                                      });
-                                    },
-                              child: Container(
-                                  width: _buttonZoomout.value == 70
-                                      ? _buttonSqueezeAnimation.value
-                                      : _buttonZoomout.value,
-                                  height: _buttonZoomout.value == 70
-                                      ? 60.0
-                                      : _buttonZoomout.value,
-                                  alignment: FractionalOffset.center,
-                                  decoration: BoxDecoration(
-                                    color: _buttonZoomout.value == 70
-                                        ? Color.fromRGBO(247, 64, 106, 1.0)
-                                        : Color.fromRGBO(247, 64, 106, 1.0),
-                                    borderRadius: _buttonZoomout.value < 400
-                                        ? new BorderRadius.all(
-                                            const Radius.circular(30.0))
-                                        : new BorderRadius.all(
-                                            const Radius.circular(0.0)),
-                                  ),
-                                  child: _buttonSqueezeAnimation.value > 75.0
-                                      ? new Text(
-                                          "Sign In",
-                                          style: new TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 20.0,
-                                            fontWeight: FontWeight.w300,
-                                            letterSpacing: 0.3,
-                                          ),
-                                        )
-                                      : _buttonZoomout.value < 300.0
-                                          ? new CircularProgressIndicator(
-                                              value: null,
-                                              strokeWidth: 1.0,
-                                              valueColor:
-                                                  AlwaysStoppedAnimation<Color>(
-                                                      Colors.white),
-                                            )
-                                          : null))),
+                                    _timer?.cancel();
+                                    _emailController.clear();
+                                    _passController.clear();
+                                    _email = null;
+                                    _pass = null;
+                                    setState(() {
+                                      _isSigningIn = false;
+                                    });
+                                  },
+                            child: Container(
+                                width: _buttonZoomout.value == 70
+                                    ? _buttonSqueezeAnimation.value
+                                    : _buttonZoomout.value,
+                                height: _buttonZoomout.value == 70
+                                    ? 60.0
+                                    : _buttonZoomout.value,
+                                alignment: FractionalOffset.center,
+                                decoration: BoxDecoration(
+                                  color: _buttonZoomout.value == 70
+                                      ? Color.fromRGBO(247, 64, 106, 1.0)
+                                      : Color.fromRGBO(247, 64, 106, 1.0),
+                                  borderRadius: _buttonZoomout.value < 400
+                                      ? new BorderRadius.all(
+                                          const Radius.circular(30.0))
+                                      : new BorderRadius.all(
+                                          const Radius.circular(0.0)),
+                                ),
+                                child: _buttonSqueezeAnimation.value > 75.0
+                                    ? new Text(
+                                        "Sign In",
+                                        style: new TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 20.0,
+                                          fontWeight: FontWeight.w300,
+                                          letterSpacing: 0.3,
+                                        ),
+                                      )
+                                    : _buttonZoomout.value < 300.0
+                                        ? new CircularProgressIndicator(
+                                            value: null,
+                                            strokeWidth: 1.0,
+                                            valueColor:
+                                                AlwaysStoppedAnimation<Color>(
+                                                    Colors.white),
+                                          )
+                                        : null),
+                          )),
                     ),
                   ],
                 ),
               ),
             ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _getCloseButton(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0, 10, 10, 0),
+      child: GestureDetector(
+        onTap: () {
+          Navigator.pop(context);
+        },
+        child: Container(
+          alignment: FractionalOffset.topRight,
+          child: Icon(
+            Icons.close,
+            size: 25,
+            color: Vx.red900,
           ),
         ),
       ),
